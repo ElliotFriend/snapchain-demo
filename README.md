@@ -1,5 +1,11 @@
 # Stellar Smart Contract Demo: Snapchain
 
+
+**Consensus 2025: Stellar Toronto Builder Summit - Snapchain Smart Contract Walkthrough**
+<a href="https://www.youtube.com/watch?v=TB7ORkbxcpQ">
+	<img width="873" alt="image" src="https://github.com/user-attachments/assets/22fb8e02-3cfd-4c30-94df-e37e0af193e9" />
+</a>
+
 Learn how to build smart contracts on the ✨ [Stellar Network](https://developers.stellar.org/)
 with [smart wallets](https://developers.stellar.org/docs/build/apps/smart-wallets)
 powered by Stellar Dev Tools
