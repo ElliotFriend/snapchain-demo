@@ -1,5 +1,4 @@
 import { PasskeyKit, PasskeyServer } from "passkey-kit";
-import { clearContractId, clearPasskeyId, saveContractId, savePasskeyId } from "./storage";
 
 export const account = new PasskeyKit({
     rpcUrl: import.meta.env.VITE_RPC_URL,
@@ -14,6 +13,7 @@ export const server = new PasskeyServer({
     launchtubeJwt: import.meta.env.VITE_LAUNCHTUBE_JWT,
 })
 
+import { clearContractId, clearPasskeyId, saveContractId, savePasskeyId } from "./storage";
 export async function signup() {
     console.log('signing up')
     try {

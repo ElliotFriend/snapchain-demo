@@ -19,3 +19,14 @@ export function scrollToTop() {
 export function scrollToBottom() {
     window.scrollTo(0, document.body.scrollHeight)
 }
+
+export function storeUserWallet(passkeyId: string, contractId: string) {}
+
+export function clearUserWallet() {}
+
+export function retrieveUserWallet(): {address: string, keyId: string} {
+    return {
+        address: "C...",
+        keyId: "someKey",
+    }
+}

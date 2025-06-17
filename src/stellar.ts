@@ -2,6 +2,7 @@ import { xdr, Address, nativeToScVal, Contract, scValToNative } from '@stellar/s
 import { Server } from '@stellar/stellar-sdk/rpc';
 import { networks } from 'snapchain_sdk'
 import { truncate } from './utils';
+// import { signup as signupV2 } from './demo';
 
 export const rpc = new Server(import.meta.env.VITE_RPC_URL);
 

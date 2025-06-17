@@ -13,8 +13,9 @@ const snapchain = new SnapchainClient({
 
 export class ChatLog {
     element: HTMLDivElement;
+    latestLedger: number | undefined;
     nextIndex: number | undefined;
-    messages: Record<number, ChatMessage> = {};
+    messages: Record<number, {message: ChatMessage; expiration: number|undefined}> = {};
 
     constructor(element: HTMLDivElement) {
         this.element = element
@@ -28,8 +29,13 @@ export class ChatLog {
             return
         }
 
+        for (let i = 0; i < this.nextIndex!; i++) {
+            if (this.messages[i]) {
+                console.log('found i', i)
+            }
+        }
         let messageElements = Object.entries(this.messages)
-            .map(([_, chatMessage]) => renderMessage(chatMessage))
+            .map(([index, chatMessage]) => renderMessage(Number(index), chatMessage.message, this.latestLedger ?? 0, chatMessage.expiration ?? 0))
         this.element.replaceChildren(...messageElements)
     }
 
@@ -61,13 +67,17 @@ export class ChatLog {
 
         if (possibleChats.length <= 200) {
             // not too many chats, make a single request
-            entries = (await rpc.getLedgerEntries(...possibleChats)).entries
+            const response = await rpc.getLedgerEntries(...possibleChats)
+            entries = response.entries
+            this.latestLedger = response.latestLedger
         } else {
             // more than 200 chat history, do some iterating
             while (possibleChats.length) {
                 let tempChats = possibleChats.slice(0, 200);
                 possibleChats = possibleChats.slice(200)
-                entries = entries.concat(entries, (await rpc.getLedgerEntries(...tempChats)).entries)
+                const response = await rpc.getLedgerEntries(...tempChats)
+                entries = entries.concat(entries, response.entries)
+                this.latestLedger = response.latestLedger
             }
         }
 
@@ -75,7 +85,10 @@ export class ChatLog {
         entries.forEach((e) => {
             const chatIndex = scValToNative(e.key.contractData().key())[1]
             const chatMessage: ChatMessage = scValToNative(e.val.contractData().val())
-            this.messages[chatIndex] = chatMessage
+            this.messages[chatIndex] = {
+                expiration: e.liveUntilLedgerSeq,
+                message: chatMessage
+            }
         })
     }
 
@@ -86,31 +99,46 @@ export class ChatLog {
     }
 }
 
-function renderMessage({author, message, timestamp}: ChatMessage): HTMLElement {
+function renderMessage(index: number, chatMessage: ChatMessage, latest: number, expiration: number): HTMLElement {
+    const showExpirationStuff = latest > 0 && expiration > 0;
+
     // create the main chunks of a message card
     const article = document.createElement('article')
     article.classList.add('chat-card')
     const header = document.createElement('header')
     const nav = document.createElement('nav')
+    const footer = document.createElement('footer')
 
     // fill in the "header" of the message card
+    const smallTitle = document.createElement('small')
+    const chatTitle = document.createElement('code')
+    chatTitle.textContent = `Chat(${index})`
+    smallTitle.append(chatTitle)
     const smallAuthor = document.createElement('small')
-    const authorLink = stellarExpertLink(author)
+    const authorLink = stellarExpertLink(chatMessage.author)
     smallAuthor.append(authorLink)
     const smallTimestamp = document.createElement('small')
-    smallTimestamp.textContent = new Date(Number(timestamp) * 1_000).toLocaleString()
+    smallTimestamp.textContent = new Date(Number(chatMessage.timestamp) * 1_000).toLocaleString()
 
     // create he message paragraph element
     const messageP = document.createElement('p')
-    messageP.textContent = message
+    messageP.textContent = chatMessage.message
 
     // TODO: Add some kind of "save message" button that will extend the ledger entry's TTL
+    if (showExpirationStuff) {
+        const footerSmall = document.createElement('small')
+        const footerCode = document.createElement('code')
+        footerCode.textContent = (expiration - latest).toString()
+        footerSmall.append("expires in ", footerCode, " ledgers")
+        footer.append(footerSmall)
+    }
 
     // assemble the card
-    nav.append(smallAuthor, smallTimestamp)
+    nav.append(smallTitle, smallAuthor, smallTimestamp)
     header.append(nav)
     article.append(header)
     article.append(messageP)
+    showExpirationStuff && article.append(footer)
 
     // return the constructed message card
     return article
