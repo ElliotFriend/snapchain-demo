@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { Client as ContractClient, Spec as ContractSpec, } from '@stellar/stellar-sdk/contract';
+import { Client as ContractClient, Spec as ContractSpec, } from '@stellar/stellar-sdk/minimal/contract';
 if (typeof window !== 'undefined') {
     //@ts-ignore Buffer exists
     window.Buffer = window.Buffer || Buffer;

@@ -1,6 +1,6 @@
 import { Buffer } from "buffer";
-import { AssembledTransaction, Client as ContractClient, ClientOptions as ContractClientOptions, MethodOptions } from '@stellar/stellar-sdk/contract';
-import type { u32, u64 } from '@stellar/stellar-sdk/contract';
+import { AssembledTransaction, Client as ContractClient, ClientOptions as ContractClientOptions, MethodOptions } from '@stellar/stellar-sdk/minimal/contract';
+import type { u32, u64 } from '@stellar/stellar-sdk/minimal/contract';
 export declare const networks: {
     readonly testnet: {
         readonly networkPassphrase: "Test SDF Network ; September 2015";
