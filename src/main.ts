@@ -54,6 +54,7 @@ let cl = new ChatLog(document.querySelector<HTMLDivElement>('#chit-chat')!)
 // set up the form
 let form = document.querySelector<HTMLFormElement>('#message-form');
 let sendButton = document.querySelector<HTMLButtonElement>('#sendButton');
+sendButton!.disabled = storedPasskeyId === null
 
 // on form submission, invoke the contract's function
 form?.addEventListener('submit', async (event: Event) => {
