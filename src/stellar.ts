@@ -18,7 +18,7 @@ export async function getNextIndex(): Promise<number> {
 }
 
 export function createChatLedgerKeys(latestIndex: number): xdr.LedgerKey[] {
-    return Array.from({ length: latestIndex}, (_, i) => latestIndex - i).map((c) =>
+    return Array.from({ length: latestIndex + 1}, (_, i) => latestIndex - i).map((c) =>
         xdr.LedgerKey.contractData(
             new xdr.LedgerKeyContractData({
                 contract: new Address(networks.testnet.contractId).toScAddress(),

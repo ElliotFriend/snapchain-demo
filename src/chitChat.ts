@@ -62,7 +62,6 @@ export class ChatLog {
         }
 
         let possibleChats = createChatLedgerKeys(this.nextIndex - 1);
-        // const { entries } = await rpc.getLedgerEntries(...possibleChats)
         let entries: Api.LedgerEntryResult[] = []
 
         if (possibleChats.length <= 200) {
